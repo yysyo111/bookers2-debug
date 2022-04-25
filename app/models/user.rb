@@ -36,24 +36,23 @@ class User < ApplicationRecord
     followings.include?(user)
   end
   
-  
-  # def following?(other_user)
-  #   self.followings.include?(other_user)
-  # end
-
-  # def follow(other_user)
-  #   unless self == other_user
-  #     self.relationships.find_or_create_by(followed_id: other_user.id)
-  #   end
-  # end
-
-  # def unfollow(other_user)
-  #   relationship = self.relationships.find_by(followed_id: other_user.id)
-  #   relationship.destroy if relationship
-  # end
+  # 検索方法分岐
+  def self.looks(search, word)
+    if search == "perfect_match"
+      @user = User.where("name LIKE?", "#{word}")
+    elsif search == "forward_match"
+      @user = User.where("name LIKE?","#{word}%")
+    elsif search == "backward_match"
+      @user = User.where("name LIKE?","%#{word}")
+    elsif search == "partial_match"
+      @user = User.where("name LIKE?","%#{word}%")
+    else
+      @user = User.all
+    end
+  end
+  # nameは検索対象であるusersテーブル内のカラム名
   
   def get_profile_image
     (profile_image.attached?) ? profile_image : 'no_image.jpg'
   end
 end
-
